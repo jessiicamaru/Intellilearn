@@ -1,43 +1,14 @@
+import ExamPage from '@/pages/ExamPage';
+import LoginPage from '@/pages/LoginPage';
+import ProfilePage from '@/pages/ProfilePage';
+import ResultPage from '@/pages/ResultPage';
 import { createBrowserRouter } from 'react-router-dom';
-import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '@/pages/RegisterPage';
-import ProtectedRoute from './ProtectedRoute';
-import ExamDetailPage from '@/pages/ExamDetailPage';
-import ProtectedResultRoute from './ProtectedResultRoute';
-import ExamResultPage from '@/pages/ExamResultPage';
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: (
-            <ProtectedRoute>
-                <HomePage />
-            </ProtectedRoute>
-        ),
-    },
-    {
-        path: '/login',
-        element: <LoginPage />,
-    },
-    {
-        path: '/register',
-        element: <RegisterPage />,
-    },
-    {
-        path: '/exam/:id',
-        element: <ExamDetailPage />,
-    },
-    {
-        path: '/exam/result',
-        element: (
-            <ProtectedRoute>
-                <ProtectedResultRoute>
-                    <ExamResultPage />
-                </ProtectedResultRoute>
-            </ProtectedRoute>
-        ),
-    },
+    { path: '/', element: <LoginPage /> },
+    { path: '/profile', element: <ProfilePage /> },
+    { path: '/exam', element: <ExamPage /> },
+    { path: '/result', element: <ResultPage /> },
 ]);
 
 export default router;
