@@ -10,7 +10,7 @@ export default function ExamPage() {
     const navigate = useNavigate();
     const student: Student = state?.student;
 
-    const [quiz, setQuiz] = useState<QuizResponse | null>(null);
+    const [quiz, setQuiz] = useState<QuizResponse[] | null>(null);
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,7 @@ export default function ExamPage() {
     const handleSubmit = () => {
         if (!quiz || !student) return;
 
-        const payload = quiz.questions.map((q) => ({
+        const payload = quiz[0].selected_questions.map((q) => ({
             qid: q.qid,
             correct: answers[q.qid] === q.correct ? 1 : 0,
         }));
@@ -42,5 +42,5 @@ export default function ExamPage() {
     if (loading) return <div className="flex items-center justify-center min-h-screen">Đang tạo đề...</div>;
     if (!quiz) return <div className="text-center p-10">Không tải được đề thi.</div>;
 
-    return <Quiz quiz={quiz} answers={answers} setAnswers={setAnswers} onSubmit={handleSubmit} loading={false} />;
+    return <Quiz quiz={quiz[0]} answers={answers} setAnswers={setAnswers} onSubmit={handleSubmit} loading={false} />;
 }

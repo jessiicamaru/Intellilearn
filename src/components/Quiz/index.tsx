@@ -13,13 +13,23 @@ type Props = {
 };
 
 export default function Quiz({ quiz, answers, setAnswers, onSubmit, loading }: Props) {
-    const isComplete = quiz.questions.every((q) => answers[q.qid]);
+    console.log(quiz);
+
+    if (!quiz || !quiz.selected_questions) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-xl">Đang tải đề thi...</div>
+            </div>
+        );
+    }
+
+    const isComplete = quiz.selected_questions.every((q) => answers[q.qid]);
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-8">
             <h1 className="text-3xl font-bold text-center">Làm bài tập</h1>
             <div className="space-y-6">
-                {quiz.questions.map((q, i) => (
+                {quiz.selected_questions.map((q, i) => (
                     <Card key={q.qid} className="p-6">
                         <div className="space-y-4">
                             <p className="font-medium">

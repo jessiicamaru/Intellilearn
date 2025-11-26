@@ -24,7 +24,7 @@ export type Question = {
 };
 
 export type QuizResponse = {
-    questions: Question[];
+    selected_questions: Question[];
     overall_reason: string;
 };
 
