@@ -1,13 +1,13 @@
 // src/lib/google-sheet.ts
-import type { Student } from '@/types';
+import type { Student, MetricHistory, AssessmentSummary } from '@/types';
 
 const SHEET_ID = '1PXg5yVODqb9WDvJT3YA-ksnr18rkmN_oYHp4aGFhebE';
-const SHEET_NAME = 'studentprofile';
-const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-export const fetchStudents = async (): Promise<Student[]> => {
+// Generic function to fetch data from any sheet
+const fetchSheetData = async <T>(sheetName: string): Promise<T[]> => {
     try {
-        const res = await fetch(API_URL);
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+        const res = await fetch(url);
         const text = await res.text();
 
         // Google bọc JSON trong: google.visualization.Query.setResponse({...})
@@ -15,28 +15,28 @@ export const fetchStudents = async (): Promise<Student[]> => {
         const data = JSON.parse(jsonText);
 
         if (!data.table || !data.table.cols || !data.table.rows) {
-            console.error('Dữ liệu Google Sheets không đúng định dạng', data);
+            console.error(`Dữ liệu từ sheet ${sheetName} không đúng định dạng`, data);
             return [];
         }
 
         // Lấy header từ cols.label
-        const headers = data.table.cols.map((col: any) => col.label);
+        const headers = data.table.cols.map((col: { label: string }) => col.label);
 
         // Lấy dữ liệu từng dòng
-        const rows = data.table.rows.map((row: any) => row.c);
+        const rows = data.table.rows.map((row: { c: unknown[] }) => row.c);
 
-        const students: Student[] = rows.map((cells: any[]) => {
-            const obj: any = {};
+        const result: T[] = rows.map((cells: unknown[]) => {
+            const obj: Record<string, string | number> = {};
 
             headers.forEach((header: string, index: number) => {
-                const value = cells[index];
-                let parsedValue: any = '';
+                const value = cells[index] as { v?: string | number; f?: string } | null;
+                let parsedValue: string | number = '';
 
                 if (value !== null && value !== undefined) {
                     if (value.v !== null && value.v !== undefined) {
                         parsedValue = value.v;
                     } else if (value.f !== undefined) {
-                        parsedValue = value.f; // dùng formatted value nếu có
+                        parsedValue = value.f;
                     }
                 }
 
@@ -45,12 +45,26 @@ export const fetchStudents = async (): Promise<Student[]> => {
                 obj[key] = parsedValue;
             });
 
-            return obj as Student;
+            return obj as T;
         });
 
-        return students;
+        return result;
     } catch (error) {
-        console.error('Lỗi khi fetch Google Sheets:', error);
+        console.error(`Lỗi khi fetch sheet ${sheetName}:`, error);
         return [];
     }
+};
+
+export const fetchStudents = async (): Promise<Student[]> => {
+    return fetchSheetData<Student>('StudentProfile');
+};
+
+export const fetchMetricHistory = async (studentId: string): Promise<MetricHistory[]> => {
+    const data = await fetchSheetData<MetricHistory>('MetricHistory');
+    return data.filter((m) => m.student_id === studentId).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+};
+
+export const fetchAssessmentSummary = async (studentId: string): Promise<AssessmentSummary[]> => {
+    const data = await fetchSheetData<AssessmentSummary>('AssessmentSummary');
+    return data.filter((a) => a.student_id === studentId).sort((a, b) => new Date(b.finished_at).getTime() - new Date(a.finished_at).getTime());
 };

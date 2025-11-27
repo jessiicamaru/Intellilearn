@@ -21,11 +21,13 @@ export type Question = {
     sub_topic: string;
     level: number;
     skill_tag: string;
+    reason?: string;
 };
 
 export type QuizResponse = {
     selected_questions: Question[];
     overall_reason: string;
+    assessment_id?: string;
 };
 
 export type StudentAnswer = {
@@ -44,4 +46,30 @@ export type ProfileUpdateResponse = {
         level_overall: string;
         rationale: string;
     };
+};
+
+export type MetricHistory = {
+    row_id: string;
+    student_id: string;
+    timestamp: string;
+    dai_so: number;
+    hinh_hoc: number;
+    level_overall: string;
+    assessment_id: string;
+};
+
+export type AssessmentSummary = {
+    assessment_id: string;
+    student_id: string;
+    started_at: string;
+    finished_at: string;
+    num_questions: number;
+    num_correct: number;
+    num_wrong: number;
+    score_overall: number;
+    accuracy_dai_so: number;
+    accuracy_hinh_hoc: number;
+    level_before: string;
+    level_after: string;
+    main_topic: string;
 };
