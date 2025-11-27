@@ -6,12 +6,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Student } from '@/types';
 import { useEffect, useState } from 'react';
 import { User, Calendar, TrendingUp, BookOpen, Award, ArrowLeft } from 'lucide-react';
+import { fetchStudents } from '@/lib/google-sheet';
 
 export default function ProfilePage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [student, setStudent] = useState<Student | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const userId = searchParams.get('id');
     const userRole = searchParams.get('role') as 'student' | 'teacher';
@@ -22,20 +24,35 @@ export default function ProfilePage() {
             return;
         }
 
-        // Simulate API call - Replace with real API
-        setTimeout(() => {
-            // Mock data based on user ID
-            const mockStudent: Student = {
-                student_id: userId,
-                name: userRole === 'teacher' ? `Giáo viên ${userId}` : `Học sinh ${userId}`,
-                dai_so: '75',
-                hinh_hoc: '65',
-                level_overall: 'B+',
-                last_update: new Date().toISOString(),
-            };
-            setStudent(mockStudent);
-            setLoading(false);
-        }, 800);
+        // Fetch student data from Google Sheets
+        fetchStudents()
+            .then((students) => {
+                const foundStudent = students.find((s) => s.student_id === userId);
+
+                if (!foundStudent && userRole === 'student') {
+                    setError(`Không tìm thấy học sinh với mã: ${userId}`);
+                    setLoading(false);
+                    return;
+                }
+
+                // If teacher or student found
+                const studentData = foundStudent || {
+                    student_id: userId,
+                    name: `Giáo viên ${userId}`,
+                    dai_so: '0',
+                    hinh_hoc: '0',
+                    level_overall: 'N/A',
+                    last_update: new Date().toISOString(),
+                };
+
+                setStudent(studentData);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error('Error fetching student:', err);
+                setError('Không thể tải dữ liệu học sinh');
+                setLoading(false);
+            });
     }, [userId, userRole, navigate]);
 
     if (loading) {
@@ -52,8 +69,24 @@ export default function ProfilePage() {
         );
     }
 
-    if (!student) {
-        return null;
+    if (error || !student) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full">
+                    <CardContent className="p-6 text-center space-y-4">
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                            <User className="w-8 h-8 text-red-600" />
+                        </div>
+                        <h2 className="text-xl font-bold text-gray-900">Không tìm thấy thông tin</h2>
+                        <p className="text-gray-600">{error || 'Vui lòng thử lại'}</p>
+                        <Button onClick={() => navigate('/')} className="w-full">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Quay lại trang chủ
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
     }
 
     const daiSo = Number(student.dai_so) || 50;
