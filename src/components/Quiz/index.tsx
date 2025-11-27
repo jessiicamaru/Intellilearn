@@ -50,8 +50,8 @@ export default function Quiz({ quiz, answers, setAnswers, onSubmit, loading }: P
                 ))}
             </div>
 
-            <div className="flex justify-center">
-                <Button size="lg" onClick={onSubmit} disabled={!isComplete || loading}>
+            <div className="flex justify-center ">
+                <Button className="bg-linear-to-r from-blue-600 to-indigo-600" size="lg" onClick={onSubmit} disabled={!isComplete || loading}>
                     {loading ? 'Đang nộp...' : 'Nộp bài'}
                 </Button>
             </div>

@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import SkillPieChart from '@/components/SkillPieChart';
-import { BookOpen, Lightbulb, Target } from 'lucide-react';
+import { BookOpen, Lightbulb, Target, TrendingUp } from 'lucide-react';
 
 export default function ResultPage() {
     const { state } = useLocation();
@@ -74,28 +73,44 @@ export default function ResultPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid md:grid-cols-2 gap-8">
-                                    <div className="space-y-6">
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Đại số</p>
-                                            <p className="text-4xl font-bold text-blue-600">{skill_updates.dai_so}%</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Hình học</p>
-                                            <p className="text-4xl font-bold text-red-600">{skill_updates.hinh_hoc}%</p>
-                                        </div>
-                                        <div className="pt-4">
-                                            <p className="text-sm text-muted-foreground">Trình độ tổng</p>
-                                            <p className="text-5xl font-bold text-primary">{level_overall}</p>
-                                        </div>
+                                <div className="space-y-3 p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <TrendingUp className="w-5 h-5 text-blue-600" />
+                                        <p className="font-semibold text-gray-900">Kỹ năng</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Trình độ tổng</p>
+                                        <p className="text-5xl font-bold text-primary">{level_overall}</p>
                                     </div>
 
-                                    <div className="flex items-center justify-center">
-                                        <SkillPieChart dai_so={skill_updates.dai_so} hinh_hoc={skill_updates.hinh_hoc} />
+                                    <div className="space-y-3">
+                                        <div>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-sm font-medium text-gray-700">Đại số</span>
+                                                <span className="text-lg font-bold text-blue-600">{skill_updates.dai_so}%</span>
+                                            </div>
+                                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                                <div
+                                                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
+                                                    style={{ width: `${skill_updates.dai_so}%` }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-sm font-medium text-gray-700">Hình học</span>
+                                                <span className="text-lg font-bold text-red-600">{skill_updates.hinh_hoc}%</span>
+                                            </div>
+                                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                                <div
+                                                    className="bg-gradient-to-r from-red-500 to-red-600 h-3 rounded-full transition-all duration-500"
+                                                    style={{ width: `${skill_updates.hinh_hoc}%` }}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {rationale && <div className="mt-8 p-4 bg-muted rounded-lg italic text-muted-foreground text-sm">{rationale}</div>}
                             </CardContent>
                         </Card>
 

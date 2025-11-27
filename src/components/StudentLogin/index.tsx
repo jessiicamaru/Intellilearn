@@ -27,10 +27,9 @@ export default function StudentLogin() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-3 sm:p-4 md:p-6">
+        <div className="min-h-screen flex items-center justify-center  to-purple-50 p-3 sm:p-4 md:p-6">
             <Card className="w-full max-w-[95%] sm:max-w-md shadow-2xl border-0 overflow-hidden">
-                {/* Header with gradient */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 md:p-8 text-white">
+                <div className="bg-linear-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 md:p-8 text-white">
                     <div className="flex items-center justify-center mb-3 sm:mb-4">
                         <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                     </div>
